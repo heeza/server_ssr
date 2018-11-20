@@ -11,7 +11,7 @@ export default (ChildComponent) => {
                 case null:
                     return <div>Loading...</div>
                 default:
-                    return <ClildComponent { ...this.props } />
+                    return <ChildComponent { ...this.props } />
             }
         }
     }
