@@ -26,14 +26,20 @@ app.use(express.static('public'));
 app.get('*', (req, res) => {
     const store = createStore(req);
 
-    // url 정보를 matching 해서 분석할 수 있다.
     const promises = matchRoutes(Routes, req.path).map(({ route }) => {
         return route.loadData ? route.loadData(store) : null;
+    }).map(promise => {
+        if(promise) {
+            return new Promise((resolve, reject) => {
+                promise.then(resolve).catch(resolve);
+            });
+        }
     });
 
     Promise.all(promises).then(() => {
         const context = {};
         const content = renderer(req, store, context);
+
         if(context.notFound) {
             res.status(404);
         }
